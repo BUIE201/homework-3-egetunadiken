@@ -1,4 +1,6 @@
 #include <iostream>
+#include <vector>
+#include <math.h>
 
 using namespace std;
 
@@ -66,18 +68,59 @@ void DeleteNodeFromTree(Node*& pRoot, int i)
     delete q;
 }
 
-void PrintTree(Node* pRoot, int Level)
+vector<pair<vector<int>,int> > FindLargestBranch(Node* pRoot, int sum, vector<int> num, int level)
 {
-    if (!pRoot)
-        return;
+    int i = 1;
+    vector<pair<vector<int>,int> > vec; 
 
-    PrintTree(pRoot->pRight, Level + 1);
+    if(pRoot->pLeft && pRoot->pRight)
+    {
+        i = i+1;
+        sum = sum + pRoot->i;
+        num.push_back(pRoot->i);
+        FindLargestBranch(pRoot->pLeft, sum, num, level+1);
+        FindLargestBranch(pRoot->pRight, sum, num, level+1);
+    }
+    else if (pRoot->pLeft && !(pRoot->pRight))
+    {
+        num.push_back(pRoot->i);
+        sum = sum + pRoot->i;
+        FindLargestBranch(pRoot->pLeft, sum, num, level+1);
+    }
+    else if (pRoot->pRight && !(pRoot->pLeft))
+    {
+        num.push_back(pRoot->i);
+        sum = sum + pRoot->i;
+        FindLargestBranch(pRoot->pRight, sum, num, level+1);
+    }
+    else
+    {
+        i = i-1;
+        pair<vector<int>,int> PAIR1;
+        PAIR1.first = num;
+        PAIR1.second = sum;
+        vec.push_back(PAIR1);
+        if(i == 0){return vec;}
+    }
+}
 
-    for (int i = 0; i < Level; i++)
-        cout << "  ";
-    cout << pRoot->i << endl;
+void Checker(Node* pRoot)
+{
+    int sum = 0;
+    int level = 0;
+    vector<int> num;
+    vector<pair<vector<int>,int> > vec = FindLargestBranch(pRoot, sum, num, level);
+    for(int i = 0; i<vec.size(); i++)
+    {
+        if(vec[i].second > sum){sum = vec[i].second; level = i;}
+    }
+    cout << "Branch with the largest sum is: ";
+    for(int i =0; i< vec[level].first.size(); i++)
+    {
+        cout << vec[level].first[i] << " ";
+    }
+    cout << "-> SUM = " << vec[level].second;
 
-    PrintTree(pRoot->pLeft, Level + 1);
 }
 
 void Insert(Node*& pRoot, Node* pNewNode)
@@ -107,6 +150,5 @@ int main()
         Node* p = new Node(i);
         InsertToTree(pRoot, p);
     }
-
-    PrintTree(pRoot, 1);
+    Checker(pRoot);
 }
