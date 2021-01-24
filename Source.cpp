@@ -71,6 +71,15 @@ void DeleteNodeFromTree(Node*& pRoot, int i)
 
 void Checker(Node* pRoot) 
 {
+    Node* root = pRoot;
+    vector <vector<int> > vect;
+    vector <int> branch;
+    while(root)
+    {
+        branch.push_back(pRoot->i);
+        if(!(pRoot->pLeft || pRoot -> pRight)){vect.push_back(branch); break;}
+
+    }
     cout << "Branch with the largest sum is: ";
 }
 
